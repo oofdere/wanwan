@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { settings } from '$lib/settings';
-	import { wk } from '$lib/wkapi';
+	import { wk, user } from '$lib/wkapi';
 
 	let tokenField: string;
 </script>
 
 {#if $wk}
-	{#await $wk.user.get()}
+	{#await $user}
 		loading...
 	{:then user}
-		<p>{user.data.username}</p>
-		<p>level {user.data.level}</p>
+		{#if user}
+			<p>{user.data.username}</p>
+			<p>level {user.data.level}</p>
+			<details>
+				<summary>info</summary>
+				{JSON.stringify(user)}
+			</details>
+		{/if}
 	{/await}
 	<button
 		on:click={() => {
