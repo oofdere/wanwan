@@ -23,12 +23,78 @@ export const wkCollectionSchema = z.object({
 		per_page: z.number()
 	}),
 	total_count: z.number(),
-	data_updated_at: z.date().nullable()
+	data_updated_at: z.coerce.date().nullable()
 });
 
 export type wkCollection = typeof wkCollectionSchema._type;
 
 // Assignments
+
+export const wkAssignmentBase = z.object({
+	available_at: z.coerce.date().nullable(),
+	burned_at: z.coerce.date().nullable(),
+	created_at: z.coerce.date(),
+	hidden: z.boolean(),
+	passed_at: z.coerce.date().nullable(),
+	resurrected_at: z.coerce.date().nullable(),
+	srs_stage: z.number(),
+	started_at: z.coerce.date().nullable(),
+	subject_id: z.number(),
+	unlocked_at: z.coerce.date().nullable()
+});
+
+export const wkAssignmentSchema = wkResourceSchema.extend({
+	object: z.literal('assignment'),
+	data: wkAssignmentBase
+});
+
+export type wkAssignment = typeof wkAssignmentSchema._type;
+
+async function getAssignment(token: string, assignment: number) {
+	const response = await fetch(`https://api.wanikani.com/v2/assignments/${assignment}`, {
+		headers: {
+			Authorization: `Bearer ${token}`
+		}
+	});
+
+	return wkAssignmentSchema.parse(await response.json());
+}
+
+export const wkAssignmentsSchema = wkCollectionSchema.extend({
+	object: z.literal('collection'),
+	data: z.array(wkAssignmentBase)
+});
+
+export type wkAssignments = typeof wkAssignmentsSchema._type;
+
+export type wkAssignmentsFilters = {
+	available_after?: Date;
+	available_before?: Date;
+	burned?: boolean;
+	hidden?: boolean;
+	ids?: Array<number>;
+	immediately_available_for_lessons?: boolean;
+	immediately_available_for_review?: boolean;
+	in_review?: boolean;
+	levels?: Array<number>;
+	srs_stages?: Array<number>;
+	started?: boolean;
+	subject_ids?: Array<number>;
+	subject_types?: Array<'kana_vocabulary' | 'kanji' | 'radical' | 'vocabulary'>;
+	unlocked?: boolean;
+	updated_after?: Date;
+};
+
+// add filters
+async function getAssignments(token: string) {
+	const response = await fetch(`https://api.wanikani.com/v2/assignments`, {
+		headers: {
+			Authorization: `Bearer ${token}`
+		}
+	});
+
+	return wkAssignmentsSchema.parse(await response.json());
+}
 
 // Level Progressions
 
@@ -101,11 +167,52 @@ async function getUser(token: string) {
 
 // Voice Actors
 
+export const wkVoiceActorSchema = wkResourceSchema.extend({
+	object: z.literal('voice_actor'),
+	data: z.object({
+		description: z.string(),
+		gender: z.enum(['male', 'female']),
+		name: z.string()
+	})
+});
+
+async function getVoiceActor(token: string, id: number) {
+	const response = await fetch(`https://api.wanikani.com/v2/voice_actors/${id}`, {
+		headers: {
+			Authorization: `Bearer ${token}`
+		}
+	});
+
+	return wkUserSchema.parse(await response.json());
+}
+
+export const wkVoiceActorsSchema = wkCollectionSchema.extend({
+	data: z.array(wkVoiceActorSchema)
+});
+
+async function getVoiceActors(token: string) {
+	const response = await fetch('https://api.wanikani.com/v2/voice_actors', {
+		headers: {
+			Authorization: `Bearer ${token}`
+		}
+	});
+
+	return wkVoiceActorsSchema.parse(await response.json());
+}
+
 // Wrapper
+
 export function wkInit(token: string) {
 	return {
 		token,
-		assignments: {},
+		assignments: {
+			get: (id: number) => {
+				return getAssignment(token, id);
+			},
+			getAll: () => {
+				return getAssignments(token);
+			}
+		},
 		level_progressions: {},
 		resets: {},
 		reviews: {},
@@ -119,8 +226,17 @@ export function wkInit(token: string) {
 				return getUser(token);
 			}
 		},
-		voice_actors: {}
+		voice_actors: {
+			get: (id: number) => {
+				return getVoiceActor(token, id);
+			},
+			getAll: () => {
+				return getVoiceActors(token);
+			}
+		}
 	};
 }
 
 export const wk = derived(settings, (s) => (s.wkToken ? wkInit(s.wkToken) : null));
+
+export const user = derived(wk, (w) => (w ? w.user.get() : null));
