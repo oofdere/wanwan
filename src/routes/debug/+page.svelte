@@ -21,6 +21,14 @@
 
 		<hr class="my-2" />
 
+		<h2 class="h2">summary</h2>
+
+		{#await $wk.summary.get() then res}
+			<CodeBlock language="json" code={JSON.stringify(res)} />
+		{/await}
+
+		<hr class="my-2" />
+
 		<h2 class="h2">user</h2>
 
 		{#await $wk.user.get() then res}

@@ -112,6 +112,37 @@ async function getAssignments(token: string) {
 
 // Summary
 
+export const wkSummarySchema = wkResourceSchema.extend({
+	object: z.literal('report'),
+	data: z.object({
+		lessons: z.array(
+			z.object({
+				available_at: z.coerce.date(),
+				subject_ids: z.array(z.number())
+			})
+		),
+		next_reviews_at: z.coerce.date(),
+		reviews: z.array(
+			z.object({
+				available_at: z.coerce.date(),
+				subject_ids: z.array(z.number())
+			})
+		)
+	})
+});
+
+export type wkSummary = typeof wkSummarySchema._type;
+
+async function getSummary(token: string) {
+	const response = await fetch('https://api.wanikani.com/v2/summary', {
+		headers: {
+			Authorization: `Bearer ${token}`
+		}
+	});
+
+	return wkSummarySchema.parse(await response.json());
+}
+
 // User
 
 export const wkUserPreferencesSchema = z.object({
@@ -152,8 +183,6 @@ export const wkUserSchema = wkResourceSchema.extend({
 		username: z.string()
 	})
 });
-
-export type wkUser = typeof wkUserSchema._type;
 
 async function getUser(token: string) {
 	const response = await fetch('https://api.wanikani.com/v2/user', {
@@ -220,7 +249,11 @@ export function wkInit(token: string) {
 		spaced_repetition_systems: {},
 		study_materials: {},
 		subjects: {},
-		summary: {},
+		summary: {
+			get: () => {
+				return getSummary(token);
+			}
+		},
 		user: {
 			get: () => {
 				return getUser(token);
