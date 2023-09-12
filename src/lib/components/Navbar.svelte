@@ -5,7 +5,9 @@
 
 <AppBar>
 	<svelte:fragment slot="lead">
-		<strong class="text-xl">wanwan <span class="chip variant-filled">alpha</span></strong>
+		<a href="/">
+			<strong class="text-xl">wanwan <span class="badge variant-filled">alpha</span></strong>
+		</a>
 	</svelte:fragment>
 	<svelte:fragment slot="trail">
 		{#await $user}

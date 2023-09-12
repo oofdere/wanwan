@@ -6,26 +6,41 @@
 </script>
 
 {#if $wk}
-	{#await $user}
-		loading...
-	{:then user}
-		{#if user}
-			<p>{user.data.username}</p>
-			<p>level {user.data.level}</p>
-			<details>
-				<summary>info</summary>
-				{JSON.stringify(user)}
-			</details>
-		{/if}
-	{/await}
-	<button
-		on:click={() => {
-			settings.deleteToken();
-		}}
-		class="btn variant-filled-secondary"
-	>
-		Log out!
-	</button>
+	<div class="container m-auto my-4 flex flex-col gap-4">
+		<div class="logo-cloud grid-cols-1 lg:!grid-cols-2 gap-1">
+			<a class="logo-item !bg-[#ff00aa]" href="/">
+				<p class="h1">0</p>
+				<p>Lessons</p>
+			</a>
+			<a class="logo-item !bg-[#b1b1b1]" href="/">
+				<p class="h1">0</p>
+				<p>Reviews</p>
+			</a>
+		</div>
+
+		<div class="logo-cloud grid-cols-1 lg:!grid-cols-5 gap-1">
+			<a class="logo-item !bg-[#f600a4]" href="/">
+				<p class="h1">0</p>
+				<p>Apprentice</p>
+			</a>
+			<a class="logo-item !bg-[#9331ab]" href="/">
+				<p class="h1">0</p>
+				<p>Guru</p>
+			</a>
+			<a class="logo-item !bg-[#4a68e0]" href="/">
+				<p class="h1">0</p>
+				<p>Master</p>
+			</a>
+			<a class="logo-item !bg-[#009be9]" href="/">
+				<p class="h1">0</p>
+				<p>Enlightened</p>
+			</a>
+			<a class="logo-item !bg-[#484848]" href="/">
+				<p class="h1">0</p>
+				<p>Burned</p>
+			</a>
+		</div>
+	</div>
 {:else}
 	<div class="container h-full mx-auto flex justify-center items-center">
 		<div class="space-y-10 text-center flex flex-col items-center">
