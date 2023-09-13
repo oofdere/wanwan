@@ -5,6 +5,7 @@ import { derived } from 'svelte/store';
 import { z } from 'zod';
 import { settings } from '$lib/settings';
 import { assignments } from './assignments';
+import { user } from './user';
 
 // Base schemas
 
@@ -62,7 +63,7 @@ export type Collection = typeof CollectionSchema._type;
  * @param {string} token
  * @return {*}
  */
-export function wkInit(t: string) {
+export async function wkInit(t: string) {
 	const init = {
 		/** WaniKani API Token */
 		token: t,
@@ -94,7 +95,7 @@ export function wkInit(t: string) {
 		/** The summary report contains currently available lessons and reviews and the reviews that will become available in the next 24 hours, grouped by the hour. */
 		summary: {},
 		/** The user summary returns basic information for the user making the API request, identified by their API key. */
-		user: {},
+		user: await user.init(t),
 		voice_actors: {}
 	};
 
