@@ -1,5 +1,5 @@
 <script>
-	import { wk, user } from '$lib/wkapi';
+	import { wk, user, getVoiceActors } from '$lib/wkapia';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
 </script>
 

@@ -4,6 +4,7 @@
 import { derived } from 'svelte/store';
 import { z } from 'zod';
 import { settings } from '$lib/settings';
+import { assignments } from './assignments';
 
 // Base schemas
 
@@ -61,12 +62,12 @@ export type Collection = typeof CollectionSchema._type;
  * @param {string} token
  * @return {*}
  */
-export function wkInit(token: string) {
+export function wkInit(t: string) {
 	const init = {
 		/** WaniKani API Token */
-		token,
+		token: t,
 		/** Assignments contain information about a user's progress on a particular subject, including their current state and timestamps for various progress milestones. Assignments are created when a user has passed all the components of the given subject and the assignment is at or below their current level for the first time. */
-		assignments: {},
+		assignments: assignments.init(t),
 		/** Level progressions contain information about a user's progress through the WaniKani levels.
 		 *
 		 * A level progression is created when a user has met the prerequisites for leveling up, which are:
@@ -102,4 +103,4 @@ export function wkInit(token: string) {
 
 export const wk = derived(settings, (s) => (s.wkToken ? wkInit(s.wkToken) : null));
 
-export const user = derived(wk, (w) => (w ? w.user.get() : null));
+//export const user = derived(wk, (w) => (w ? w.user.get() : null));
