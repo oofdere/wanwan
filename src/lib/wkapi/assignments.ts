@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ResourceSchema, CollectionSchema, type Token } from '.';
+import { ResourceSchema, CollectionSchema, type Token } from './schemas';
 
 const BaseSchema = z.object({
 	/** Timestamp when the related subject will be available in the user's review queue. */

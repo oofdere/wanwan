@@ -1,5 +1,5 @@
 import { number, z } from 'zod';
-import { ResourceSchema, CollectionSchema, type Token } from '.';
+import { ResourceSchema, CollectionSchema, type Token } from './schemas';
 
 const Preferences = z.object({
 	/** The voice actor to be used for lessons and reviews. The value is associated to `subject.pronunciation_audios.metadata.voice_actor_id`. */
@@ -64,17 +64,13 @@ async function get(t: Token) {
 		}
 	});
 
-	return ResourceSchema.extend({ BaseSchema }).parse(await response.json());
+	return ResourceSchema.extend({ data: BaseSchema }).parse(await response.json());
 }
 
-export async function init(t: Token) {
-	const user = await get(t);
-
+export function init(t: Token) {
 	return {
-		...user,
-		...user.BaseSchema,
 		/** Returns a summary of user information. Is built into the `init()` return since it rarely updates, reccomended way to update is to create a new instance of the API client. */
-		getRaw: () => {
+		get: () => {
 			return get(t);
 		}
 	};

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { settings } from '$lib/settings';
-	import { wk, user } from '$lib/wkapia';
+	import { wk, user } from '$lib/wk';
 
 	let tokenField: string;
 </script>

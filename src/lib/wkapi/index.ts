@@ -1,60 +1,9 @@
 // this is a ts interface to the wk api with validation via zod
 // I have no idea how to wrap APIs, so this code will be messy, bear with me
 
-import { derived } from 'svelte/store';
 import { z } from 'zod';
-import { settings } from '$lib/settings';
 import { assignments } from './assignments';
 import { user } from './user';
-
-// Base schemas
-
-/** WaniKani v2 API key */
-export type Token = string;
-
-/** Zod schema for WaniKani Resources */
-export const ResourceSchema = z.object({
-	id: z.number().optional(),
-	url: z.string().url(),
-	data_updated_at: z.coerce.date().nullable()
-});
-
-/** Type for WaniKani Resources */
-export type Resource = typeof ResourceSchema._type;
-
-/** Zod schema for WaniKani Collections */
-export const CollectionSchema = z.object({
-	object: z.literal('collection'),
-	url: z.string().url(),
-	pages: z.object({
-		next_url: z.string().url().nullable(),
-		previous_url: z.string().url().nullable(),
-		per_page: z.number()
-	}),
-	total_count: z.number(),
-	data_updated_at: z.coerce.date().nullable()
-});
-
-/** Type for WaniKani Collections */
-export type Collection = typeof CollectionSchema._type;
-
-// Assignments
-
-// Level Progressions
-
-// Resets
-
-// Reviews
-
-// Review Statistics
-
-// Spaced Repetition Systems
-
-// Study Materials
-
-// Subjects
-
-// Wrapper
 
 /**
  * Returns an object that provides a fluent interface to the WaniKani API.
@@ -63,7 +12,7 @@ export type Collection = typeof CollectionSchema._type;
  * @param {string} token
  * @return {*}
  */
-export async function wkInit(t: string) {
+export function wkInit(t: string) {
 	const init = {
 		/** WaniKani API Token */
 		token: t,
@@ -95,13 +44,9 @@ export async function wkInit(t: string) {
 		/** The summary report contains currently available lessons and reviews and the reviews that will become available in the next 24 hours, grouped by the hour. */
 		summary: {},
 		/** The user summary returns basic information for the user making the API request, identified by their API key. */
-		user: await user.init(t),
+		user: user.init(t),
 		voice_actors: {}
 	};
 
 	return init;
 }
-
-export const wk = derived(settings, (s) => (s.wkToken ? wkInit(s.wkToken) : null));
-
-//export const user = derived(wk, (w) => (w ? w.user.get() : null));

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { AppBar, ProgressBar, ProgressRadial } from '@skeletonlabs/skeleton';
-	import { wk, user } from '$lib/wkapia';
+	import { wk, user } from '$lib/wk';
 </script>
 
 <AppBar>
