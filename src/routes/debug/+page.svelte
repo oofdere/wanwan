@@ -1,6 +1,8 @@
 <script>
-	import { wk, user, getVoiceActors } from '$lib/wkapia';
-	import { CodeBlock } from '@skeletonlabs/skeleton';
+	import { wk } from '$lib/wk';
+	import { summary } from '$lib/wkapi/summary';
+	import { CodeBlock, TreeView, TreeViewItem } from '@skeletonlabs/skeleton';
+	import { date } from 'zod';
 </script>
 
 <div class="container m-auto py-4">
@@ -23,8 +25,31 @@
 
 		<h2 class="h2">summary</h2>
 
-		{#await $wk.summary.get() then res}
-			<CodeBlock language="json" code={JSON.stringify(res)} />
+		{#await $wk.summary.get() then summary}
+			<TreeView>
+				<TreeViewItem>
+					{summary.data.lessons.length} Lessons
+					<svelte:fragment slot="children">
+						{#each summary.data.lessons as lesson}
+							<TreeViewItem>
+								<CodeBlock language="json" code={JSON.stringify(lesson)} />
+							</TreeViewItem>
+						{/each}
+					</svelte:fragment>
+				</TreeViewItem>
+				<TreeViewItem>
+					{summary.data.reviews.length} Reviews
+					<svelte:fragment slot="children">
+						{#each summary.data.reviews as review}
+							<TreeViewItem>
+								<CodeBlock language="json" code={JSON.stringify(review)} />
+							</TreeViewItem>
+						{/each}
+					</svelte:fragment>
+				</TreeViewItem>
+			</TreeView>
+
+			<CodeBlock language="json" code={JSON.stringify(summary)} />
 		{/await}
 
 		<hr class="my-2" />
