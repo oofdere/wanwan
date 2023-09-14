@@ -1,4 +1,4 @@
-import { number, z } from 'zod';
+import { z } from 'zod';
 import { ResourceSchema, CollectionSchema, type Token } from './schemas';
 
 const Preferences = z.object({

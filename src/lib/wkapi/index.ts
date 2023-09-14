@@ -4,6 +4,7 @@
 import { z } from 'zod';
 import { assignments } from './assignments';
 import { user } from './user';
+import { voice_actors } from './voice_actors';
 
 /**
  * Returns an object that provides a fluent interface to the WaniKani API.
@@ -45,7 +46,7 @@ export function wkInit(t: string) {
 		summary: {},
 		/** The user summary returns basic information for the user making the API request, identified by their API key. */
 		user: user.init(t),
-		voice_actors: {}
+		voice_actors: voice_actors.init(t)
 	};
 
 	return init;
