@@ -11,7 +11,7 @@ const BaseSchema = z.object({
 });
 
 const Schema = ResourceSchema.extend({
-	object: z.literal('assignment'),
+	object: z.literal('voice_actor'),
 	data: BaseSchema
 });
 
@@ -22,7 +22,7 @@ async function getAll(t: Token) {
 		}
 	});
 
-	return CollectionSchema.extend({ data: Schema }).parse(await response.json());
+	return CollectionSchema.extend({ data: z.array(Schema) }).parse(await response.json());
 }
 
 async function get(t: Token, id: number) {
@@ -32,7 +32,7 @@ async function get(t: Token, id: number) {
 		}
 	});
 
-	return ResourceSchema.extend({ BaseSchema }).parse(await response.json());
+	return Schema.parse(await response.json());
 }
 
 export function init(t: Token) {

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { assignments } from './assignments';
 import { user } from './user';
 import { voice_actors } from './voice_actors';
+import { summary } from './summary';
 
 /**
  * Returns an object that provides a fluent interface to the WaniKani API.
@@ -43,9 +44,10 @@ export function wkInit(t: string) {
 		/** Subjects are the radicals, kanji, vocabulary, and kana_vocabulary that are learned through lessons and reviews. They contain basic dictionary information, such as meanings and/or readings, and information about their relationship to other items with WaniKani, like their level. */
 		subjects: {},
 		/** The summary report contains currently available lessons and reviews and the reviews that will become available in the next 24 hours, grouped by the hour. */
-		summary: {},
+		summary: summary.init(t),
 		/** The user summary returns basic information for the user making the API request, identified by their API key. */
 		user: user.init(t),
+		/** Available voice actors used for vocabulary reading pronunciation audio. */
 		voice_actors: voice_actors.init(t)
 	};
 
