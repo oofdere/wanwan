@@ -36,7 +36,17 @@ async function get(t: Token) {
 		}
 	});
 
-	return Schema.parse(await response.json());
+	const s = Schema.parse(await response.json());
+
+	const lesson_count = s.data.lessons.reduce((acc, cur) => cur.subject_ids.length + acc, 0);
+
+	const review_count = s.data.reviews[0].subject_ids.length;
+
+	return {
+		...s,
+		lesson_count,
+		review_count
+	};
 }
 
 export function init(t: Token) {

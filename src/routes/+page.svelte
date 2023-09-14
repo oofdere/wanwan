@@ -2,20 +2,28 @@
 	import { settings } from '$lib/settings';
 	import { wk, user } from '$lib/wk';
 
+	const summary = $wk!.summary.get();
+
 	let tokenField: string;
 </script>
 
 {#if $wk}
 	<div class="container m-auto my-4 flex flex-col gap-4">
 		<div class="logo-cloud grid-cols-1 lg:!grid-cols-2 gap-1">
-			<a class="logo-item !bg-[#ff00aa]" href="/">
-				<p class="h1">0</p>
-				<p>Lessons</p>
-			</a>
-			<a class="logo-item !bg-[#b1b1b1]" href="/">
-				<p class="h1">0</p>
-				<p>Reviews</p>
-			</a>
+			{#await summary then s}
+				<a class="logo-item {s.lesson_count > 0 ? '!bg-[#ff00aa]' : '!bg-[#b1b1b1]'}" href="/">
+					<p class="h1">
+						{s.lesson_count}
+					</p>
+					<p>Lessons</p>
+				</a>
+				<a class="logo-item {s.review_count > 0 ? '!bg-[#00aaff]' : '!bg-[#b1b1b1]'}" href="/">
+					<p class="h1">
+						{s.review_count}
+					</p>
+					<p>Reviews</p>
+				</a>
+			{/await}
 		</div>
 
 		<div class="logo-cloud grid-cols-1 lg:!grid-cols-5 gap-1">
