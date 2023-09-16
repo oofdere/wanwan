@@ -174,8 +174,6 @@ const Schema = ResourceSchema.extend({
 	data: z.any()
 });
 
-type Wtf = z.infer<typeof Schema>;
-
 type getAllSettings = {
 	/** Only subjects where `data.id` matches one of the array values are returned. */
 	ids?: number[];
@@ -207,6 +205,12 @@ type DataTypes =
 	| z.infer<typeof Vocabulary>
 	| z.infer<typeof KanaVocabulary>;
 
+type Kind =
+	| { kind: 'radical'; data: z.infer<typeof Radical> }
+	| { kind: 'kanji'; data: z.infer<typeof Kanji> }
+	| { kind: 'vocabulary'; data: z.infer<typeof Vocabulary> }
+	| { kind: 'kana_vocabulary'; data: z.infer<typeof KanaVocabulary> };
+
 async function get(t: Token, id: number) {
 	const response = await fetch(`https://api.wanikani.com/v2/subjects/${id}`, {
 		headers: {
@@ -216,19 +220,32 @@ async function get(t: Token, id: number) {
 
 	const base = Schema.parse(await response.json());
 
-	let data: DataTypes;
+	let kind;
+	let data: Kind;
 	switch (base.object) {
 		case 'radical':
-			data = Radical.parse(base.data);
+			data = {
+				kind: 'radical',
+				data: Radical.parse(base.data)
+			};
 			break;
 		case 'kanji':
-			data = Kanji.parse(base.data);
+			data = {
+				kind: 'kanji',
+				data: Kanji.parse(base.data)
+			};
 			break;
 		case 'vocabulary':
-			data = Vocabulary.parse(base.data);
+			data = {
+				kind: 'vocabulary',
+				data: Vocabulary.parse(base.data)
+			};
 			break;
 		case 'kana_vocabulary':
-			data = KanaVocabulary.parse(base.data);
+			data = {
+				kind: 'kana_vocabulary',
+				data: KanaVocabulary.parse(base.data)
+			};
 			break;
 	}
 
@@ -236,6 +253,13 @@ async function get(t: Token, id: number) {
 		...base,
 		data
 	};
+}
+
+enum SubjectType {
+	Radical,
+	Kanji,
+	Vocabulary,
+	KanaVocabulary
 }
 
 export function init(t: Token) {
